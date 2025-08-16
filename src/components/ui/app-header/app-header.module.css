@@ -35,3 +35,16 @@
   align-items: center;
   margin: 0 auto;
 }
+
+.menu_item,
+.logo,
+.link_position_last {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+}
+
+.menu_item:hover,
+.link_position_last:hover {
+  opacity: 0.8;
+}
