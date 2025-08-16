@@ -1,4 +1,4 @@
-import { setCookie, getCookie } from './cookie';
+import { setCookie, getCookie, deleteCookie } from './cookie';
 import { TIngredient, TOrder, TOrdersData, TUser } from './types';
 
 const URL = process.env.BURGER_API_URL;
@@ -142,7 +142,22 @@ type TAuthResponse = TServerResponse<{
   accessToken: string;
   user: TUser;
 }>;
+//регистрация
+// export const registerUserApi = (data: TRegisterData) =>
+//   fetch(`${URL}/auth/register`, {
+//     method: 'POST',
+//     headers: {
+//       'Content-Type': 'application/json;charset=utf-8'
+//     },
+//     body: JSON.stringify(data)
+//   })
+//     .then((res) => checkResponse<TAuthResponse>(res))
+//     .then((data) => {
+//       if (data?.success) return data;
+//       return Promise.reject(data);
+//     });
 
+// измененная функция регистрации пользователя (сразу записываем токены в localStorage)
 export const registerUserApi = (data: TRegisterData) =>
   fetch(`${URL}/auth/register`, {
     method: 'POST',
@@ -153,7 +168,12 @@ export const registerUserApi = (data: TRegisterData) =>
   })
     .then((res) => checkResponse<TAuthResponse>(res))
     .then((data) => {
-      if (data?.success) return data;
+      if (data?.success) {
+        localStorage.setItem('refreshToken', data.refreshToken);
+        localStorage.setItem('accessToken', data.accessToken);
+        setCookie('accessToken', data.accessToken);
+        return data;
+      }
       return Promise.reject(data);
     });
 
@@ -161,7 +181,22 @@ export type TLoginData = {
   email: string;
   password: string;
 };
+// вход по логину и паролю
+// export const loginUserApi = (data: TLoginData) =>
+//   fetch(`${URL}/auth/login`, {
+//     method: 'POST',
+//     headers: {
+//       'Content-Type': 'application/json;charset=utf-8'
+//     },
+//     body: JSON.stringify(data)
+//   })
+//     .then((res) => checkResponse<TAuthResponse>(res))
+//     .then((data) => {
+//       if (data?.success) return data;
+//       return Promise.reject(data);
+//     });
 
+//Измененная функция получения токенов по логину и паролю
 export const loginUserApi = (data: TLoginData) =>
   fetch(`${URL}/auth/login`, {
     method: 'POST',
@@ -172,10 +207,16 @@ export const loginUserApi = (data: TLoginData) =>
   })
     .then((res) => checkResponse<TAuthResponse>(res))
     .then((data) => {
-      if (data?.success) return data;
+      if (data?.success) {
+        localStorage.setItem('refreshToken', data.refreshToken);
+        localStorage.setItem('accessToken', data.accessToken);
+        setCookie('accessToken', data.accessToken);
+        return data;
+      }
       return Promise.reject(data);
     });
 
+//сброс пароля
 export const forgotPasswordApi = (data: { email: string }) =>
   fetch(`${URL}/password-reset`, {
     method: 'POST',
@@ -189,7 +230,7 @@ export const forgotPasswordApi = (data: { email: string }) =>
       if (data?.success) return data;
       return Promise.reject(data);
     });
-
+// смена пароля по токену
 export const resetPasswordApi = (data: { password: string; token: string }) =>
   fetch(`${URL}/password-reset/reset`, {
     method: 'POST',
@@ -205,13 +246,28 @@ export const resetPasswordApi = (data: { password: string; token: string }) =>
     });
 
 type TUserResponse = TServerResponse<{ user: TUser }>;
-
+//получение юзера по токену
 export const getUserApi = () =>
   fetchWithRefresh<TUserResponse>(`${URL}/auth/user`, {
     headers: {
       authorization: getCookie('accessToken')
     } as HeadersInit
   });
+
+// измененная функция получения юзера
+// export const getUserApi = () =>
+//   fetchWithRefresh<TUserResponse>(`${URL}/auth/user`, {
+//     method: 'GET',
+//     headers: {
+//       'Content-Type': 'application/json',
+//       аuthorization: localStorage.getItem('accessToken')
+//     } as HeadersInit
+//   }).then((data) => {
+//     if (data?.success) return data;
+//     localStorage.removeItem('refreshToken');
+//     localStorage.removeItem('accessToken');
+//     return Promise.reject(data);
+//   });
 
 export const updateUserApi = (user: Partial<TRegisterData>) =>
   fetchWithRefresh<TUserResponse>(`${URL}/auth/user`, {
@@ -222,7 +278,7 @@ export const updateUserApi = (user: Partial<TRegisterData>) =>
     } as HeadersInit,
     body: JSON.stringify(user)
   });
-
+//удаление токенов
 export const logoutApi = () =>
   fetch(`${URL}/auth/logout`, {
     method: 'POST',
@@ -233,3 +289,25 @@ export const logoutApi = () =>
       token: localStorage.getItem('refreshToken')
     })
   }).then((res) => checkResponse<TServerResponse<{}>>(res));
+
+// измененная функция удаления токенов
+// export const logoutApi = () =>
+//   fetch(`${URL}/auth/logout`, {
+//     method: 'POST',
+//     headers: {
+//       'Content-Type': 'application/json;charset=utf-8'
+//     },
+//     body: JSON.stringify({
+//       token: localStorage.getItem('refreshToken')
+//     })
+//   })
+//     .then((res) => checkResponse<TServerResponse<{}>>(res))
+//     .then((data) => {
+//       if (data?.success) {
+//         localStorage.removeItem('refreshToken');
+//         localStorage.removeItem('accessToken');
+//         deleteCookie('accessToken');
+//         return data;
+//       }
+//       return Promise.reject(data);
+//     });
