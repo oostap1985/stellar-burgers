@@ -22,7 +22,7 @@ export const BurgerConstructor: FC = () => {
   const [orderModalData, setOrderModalData] = useState<TOrder | null>(null);
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const userIsAuthenticated = useSelector(getUser); ////////
+  const userIsAuthenticated = useSelector(getUser);
   const { order, name, isLoad } = useSelector(getStateOrder);
 
   useEffect(() => {

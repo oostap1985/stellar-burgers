@@ -10,10 +10,7 @@ import {
   useMatch
 } from 'react-router-dom';
 import { AppHeader } from '@components';
-import { Link } from 'react-router-dom';
 import { Modal, IngredientDetails } from '@components';
-import { useSelector } from '../../services/store';
-import { getIngredients } from '../../services/ingredients/slice';
 import { fetchIngredients } from '../../services/ingredients/action';
 import { useEffect } from 'react';
 import { useDispatch } from '../../services/store';

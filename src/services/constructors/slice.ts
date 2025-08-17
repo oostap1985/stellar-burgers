@@ -1,5 +1,5 @@
 import { TIngredient } from '../../utils/types';
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { createSlice, PayloadAction, nanoid } from '@reduxjs/toolkit';
 
 type TConstructorIngredient = TIngredient & { id: string };
 
@@ -20,11 +20,22 @@ export const constructorSlice = createSlice({
     addBun: (state, action: PayloadAction<TIngredient>) => {
       state.bun = action.payload;
     },
-    addIngredient: (state, action: PayloadAction<TIngredient>) => {
-      state.ingredients.push({
-        ...action.payload,
-        id: crypto.randomUUID()
-      });
+    // addIngredient: (state, action: PayloadAction<TIngredient>) => {
+    //   state.ingredients.push({
+    //     ...action.payload,
+    //     id: crypto.randomUUID()
+    //   });
+    // },
+    addIngredient: {
+      reducer: (state, action: PayloadAction<TConstructorIngredient>) => {
+        state.ingredients.push(action.payload);
+      },
+      prepare: (ingredient: TIngredient) => ({
+        payload: {
+          ...ingredient,
+          id: nanoid()
+        }
+      })
     },
     clearConstructor: (state) => {
       state.bun = null;
@@ -32,36 +43,40 @@ export const constructorSlice = createSlice({
     },
     removeIngredient: (state, action: PayloadAction<string>) => {
       state.ingredients = state.ingredients.filter(
-        (item) => item._id !== action.payload
+        (item) => item.id !== action.payload //////
       );
     },
     moveIngredientUp: (state, action: PayloadAction<string>) => {
       const index = state.ingredients.findIndex(
-        (item) => item._id === action.payload
+        (item) => item.id === action.payload ///////
       );
-      // Создаем копию массива
-      const newIngredients = [...state.ingredients];
-      // Меняем местами текущий элемент с предыдущим
-      [newIngredients[index - 1], newIngredients[index]] = [
-        newIngredients[index],
-        newIngredients[index - 1]
-      ];
-      // Обновляем state
-      state.ingredients = newIngredients;
+
+      if (index > 0) {
+        const newIngredients = [...state.ingredients];
+        // Меняем местами текущий элемент с предыдущим
+        [newIngredients[index - 1], newIngredients[index]] = [
+          newIngredients[index],
+          newIngredients[index - 1]
+        ];
+        // Обновляем state
+        state.ingredients = newIngredients;
+      }
     },
     moveIngredientDown: (state, action: PayloadAction<string>) => {
       const index = state.ingredients.findIndex(
-        (item) => item._id === action.payload
+        (item) => item.id === action.payload
       );
-      // Создаем копию массива
-      const newIngredients = [...state.ingredients];
-      // Меняем местами текущий элемент с предыдущим
-      [newIngredients[index], newIngredients[index + 1]] = [
-        newIngredients[index + 1],
-        newIngredients[index]
-      ];
-      // Обновляем state
-      state.ingredients = newIngredients;
+
+      if (index < state.ingredients.length - 1) {
+        const newIngredients = [...state.ingredients];
+        // Меняем местами текущий элемент с предыдущим
+        [newIngredients[index], newIngredients[index + 1]] = [
+          newIngredients[index + 1],
+          newIngredients[index]
+        ];
+        // Обновляем state
+        state.ingredients = newIngredients;
+      }
     }
   },
   selectors: {
