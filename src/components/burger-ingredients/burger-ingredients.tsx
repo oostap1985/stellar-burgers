@@ -13,6 +13,7 @@ export const BurgerIngredients: FC = () => {
   const buns = useSelector(getBuns);
   const mains = useSelector(getMains);
   const sauces = useSelector(getSauces);
+  console.log(buns);
 
   const [currentTab, setCurrentTab] = useState<TTabMode>('bun');
   const titleBunRef = useRef<HTMLHeadingElement>(null);
