@@ -28,3 +28,12 @@ import './commands';
 //   // Очищаем localStorage перед каждым тестом
 //   cy.clearLocalStorage();
 // });
+
+declare global {
+  namespace Cypress {
+    interface Chainable {
+      checkEmptyConstructor(): Chainable<void>;
+      setupBurgerConstructor(): Chainable<void>;
+    }
+  }
+}

@@ -32,10 +32,13 @@ export const BurgerIngredientUI: FC<TBurgerIngredientUIProps> = memo(
           </div>
           <p className={`text text_type_main-default ${styles.text}`}>{name}</p>
         </Link>
-        {/* обернул кнопку в div, создал data-cy, чтобы найти кнопку и передал клик по ней. С компонента AddButton клик убрал. 
-        Скорее всего так делать нельзя, просто не смог в сам компонент AddButton передать дополнительный атрибут data-cy*/}
-        <div data-cy={`addIngredient-${ingredient._id}`} onClick={handleAdd}>
-          <AddButton text='Добавить' extraClass={`${styles.addButton} mt-8`} />
+        {/* Обернул кнопку в div, прописал атрибут data-cy, чтобы по нему в тестах находить кнопку */}
+        <div data-cy={`addIngredient-${ingredient._id}`}>
+          <AddButton
+            text='Добавить'
+            extraClass={`${styles.addButton} mt-8`}
+            onClick={handleAdd}
+          />
         </div>
       </li>
     );

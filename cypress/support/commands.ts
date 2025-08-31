@@ -1,3 +1,5 @@
+import { SELECTORS, TEST_URL } from '../constants';
+
 /// <reference types="cypress" />
 // ***********************************************
 // This example commands.ts shows you how to
@@ -35,3 +37,27 @@
 //     }
 //   }
 // }
+
+// Кастомная команда для мокирования и посещения страницы
+Cypress.Commands.add('setupBurgerConstructor', () => {
+  // Мокаем запрос ингредиентов
+  cy.intercept('GET', 'api/ingredients', {
+    fixture: 'constructor/ingredients.json'
+  }).as('getIngredients');
+
+  // Посещаем главную страницу
+  cy.visit(TEST_URL);
+
+  // Ждем загрузки ингредиентов
+  cy.wait('@getIngredients');
+});
+
+// Команда для проверки, пустой ли конструктор
+Cypress.Commands.add('checkEmptyConstructor', () => {
+  cy.get(SELECTORS.CONSTRUCTOR_ITEM).should('not.exist');
+  cy.get(SELECTORS.CONSTRUCTOR_BUN_TOP).should('not.exist');
+  cy.get(SELECTORS.CONSTRUCTOR_BUN_BOTTOM).should('not.exist');
+  cy.get(SELECTORS.NO_BUN_TOP).should('exist');
+  cy.get(SELECTORS.NO_INGREDIENTS).should('exist');
+  cy.get(SELECTORS.NO_BUN_BOTTOM).should('exist');
+});
