@@ -7,6 +7,7 @@ import { useDispatch, useSelector } from '../../services/store';
 import { fetchOrdersAll } from '../../services/feed/action';
 import { getOrders, getOrdersLoading } from '../../services/feed/slice';
 // навести красоту и убрать лишнее
+
 export const Feed: FC = () => {
   const dispatch = useDispatch();
 
@@ -16,7 +17,7 @@ export const Feed: FC = () => {
   // Загрузка данных при монтировании
   useEffect(() => {
     dispatch(fetchOrdersAll());
-  }, [dispatch]);
+  }, []); //убрал dispatch из массива зависимостей
 
   const orders = useSelector(getOrders);
   console.log(orders);

@@ -35,7 +35,13 @@ export const BurgerConstructor: FC = () => {
   const onOrderClick = () => {
     if (!constructorItems.bun || orderRequest) return;
 
-    if (userIsAuthenticated === null) {
+    // if (userIsAuthenticated === null) {
+    //   navigate('/login');
+    //   return;
+    // }
+
+    const accessToken = localStorage.getItem('accessToken');
+    if (!accessToken) {
       navigate('/login');
       return;
     }

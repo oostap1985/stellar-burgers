@@ -20,6 +20,9 @@ export const BurgerIngredientUI: FC<TBurgerIngredientUIProps> = memo(
           className={styles.article}
           to={`/ingredients/${_id}`}
           state={locationState}
+          data-testid-cy='ingredient-item' // добавил
+          data-ingredient-type-cy={`ingredient-${ingredient.type}`} // добавил
+          data-ingredient-id-cy={ingredient._id} // добавил
         >
           {count && <Counter count={count} />}
           <img className={styles.img} src={image} alt='картинка ингредиента.' />
@@ -29,11 +32,14 @@ export const BurgerIngredientUI: FC<TBurgerIngredientUIProps> = memo(
           </div>
           <p className={`text text_type_main-default ${styles.text}`}>{name}</p>
         </Link>
-        <AddButton
-          text='Добавить'
-          onClick={handleAdd}
-          extraClass={`${styles.addButton} mt-8`}
-        />
+        {/* Обернул кнопку в div, прописал атрибут data-cy, чтобы по нему в тестах находить кнопку */}
+        <div data-cy={`addIngredient-${ingredient._id}`}>
+          <AddButton
+            text='Добавить'
+            extraClass={`${styles.addButton} mt-8`}
+            onClick={handleAdd}
+          />
+        </div>
       </li>
     );
   }
